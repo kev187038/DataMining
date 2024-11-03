@@ -1,0 +1,10 @@
+Calculated probability of exercise a: 0.696220
+Calculated probability of exercise b: 0.315879
+Calculated probability of exercise c: 0.051922
+Calculated probability of exercise d: 0.000185
+Calculated probability of exercise e: 0.003982
+Calculated probability of exercise a: 0.695995
+Calculated probability of exercise b: 0.317213
+Calculated probability of exercise c: 0.051709
+Calculated probability of exercise d: 0.000170
+Calculated probability of exercise e: 0.003916

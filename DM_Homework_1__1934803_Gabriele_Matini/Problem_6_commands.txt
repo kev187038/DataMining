@@ -1,0 +1,44 @@
+wget --user='datamining2021' --password='Data-Min1ng-2021' http://aris.me/contents/teaching/data-mining-2024/protected/beers.txt
+
+awk -F'\t' '{print $1}' './beers.txt' 
+gets first field IMPORTANT: specify tab
+Concatenate with sort which will sort on beer names 
+[Need sort concatenation otherwise it doesn't count the names correctly]
+Concatenate with count with "uniq -c" to count every occurrence
+Concatenate with "sort -k1,1nr to sort in reverse order by the first field (Which now is the count)
+Concatenate with tail -n 10 --> get first 10 rows which are the most reviewed
+59579 Samuel
+  48217 New
+  37364 Dogfish
+  36756 Stone
+  36634 Great
+  33887 Rogue
+  32198 Sierra
+  28243 Bells
+  25129 Avery
+  23230 Flying ---->Wrong result forgot tab separator
+
+final command is:
+ awk -F'\t' '{print $1}' './beers.txt' | sort | uniq -c | sort -k1,1nr | head -n 10 
+      3 Newcastle Brown Ale
+      3 Rogue Imperial India Pale Ale &#40;IPA&#41;
+      2 1809 Berliner Style Weisse
+      2 Abbaye dAulne Val de Sambre 6 &#40;Ambre&#41;
+      2 Abita Fleur-de-Lis Restoration Ale
+      2 Abita SOS &#40;Save Our Shore&#41;
+      2 Aecht Schlenkerla Rauchbier Urbock
+      2 Aecht Schlenkerla Rauchbier Weizen
+      2 Alaskan Smoked Porter
+      2 AleSmith Anvil ESB
+awk -F'\t' '{print $1}' './beers.txt' | sort | uniq -c | sort -k1,1nr | head -n 10 
+3696 Guinness Draught
+   3662 Pabst Blue Ribbon
+   3230 Dogfish Head 90 Minute Imperial IPA
+   3126 Budweiser
+   3119 Sierra Nevada Pale Ale &#40;Bottle&#41;
+   3110 Samuel Adams Boston Lager
+   3056 Chimay Bleue &#40;Blue&#41; / Grande Rserve
+   2904 North Coast Old Rasputin Russian Imperial Stout
+   2872 Stone Arrogant Bastard Ale
+   2813 Orval
+

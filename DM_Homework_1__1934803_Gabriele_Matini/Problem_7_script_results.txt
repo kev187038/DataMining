@@ -1,0 +1,11 @@
+Beer	Average Score
+Westvleteren 12	18.22621359223301
+Three Floyds Oak Aged Dark Lord Russian Imperial Stout	17.862595419847327
+Bells Bourbon Barrel Double Cream/Expedition Stout	17.71153846153846
+Goose Island Rare Bourbon County Stout	17.708520179372197
+Lost Abbey Yellow Bus 	17.676470588235293
+De Dolle Stille Nacht Reserva 2000	17.64021164021164
+Russian River Pliny the Younger	17.62121212121212
+AleSmith Barrel Aged Speedway Stout	17.61904761904762
+Cigar City Zhukovs Final Push	17.516393442622952
+AleSmith Speedway Stout	17.513698630136986
