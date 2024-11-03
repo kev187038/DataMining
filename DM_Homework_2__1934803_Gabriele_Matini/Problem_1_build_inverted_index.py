@@ -1,9 +1,10 @@
 import nltk
 import re
-from collections import defaultdict
+import json
+import math
 #We build an inverted index and store it into a file.
 nltk.download('stopwords')
-
+products = []
 #We normalize, then remove punctuation and stopwords from the description
 def preprocess(desc):
 	
@@ -12,24 +13,59 @@ def preprocess(desc):
 	
 	#Tokenize and remove punctuation
 	tokenizer = nltk.tokenize.RegexpTokenizer(r'[\w-]+(?:[\d-]*[\.,]*[\d-]+)*') #do not remove numbers in the form 1.5 or 1,5, also we want expressions like wi-fi, ddram-4 4,5-5 to be available
-	#print(desc)
 	tokens = tokenizer.tokenize(desc)
-	#Remove stopwords
 	stop_words = set(nltk.corpus.stopwords.words('italian'))
 	f_tokens = [token for token in tokens if token not in stop_words and token != '-']
-	#print(f_tokens)
 	return f_tokens
+
 	
-inverted_index = defaultdict()
+inverted_index = {}
 
 #Retrieve data from the products.tsv file
 with open("products.tsv","r") as f:
 	l = f.readline(); #l[1] = desc, l[2] = price, l[3] = prime, l[4] = link, l[5] = rating
-	
+	l = f.readline().strip().split("\t")
 	while l != ['']:
-		l = f.readline().strip().split("\t")
 		id_ = l[0]
+		products.append({'description' : l[1], 'price': l[2], 'prime':l[3], 'link':l[4], 'rating':l[5]})
 		desc = preprocess(l[1])
 		for word in desc:
+			if  word not in inverted_index.keys():
+				inverted_index[word] = []
 			inverted_index[word].append(id_)
-	print(desc)
+		l = f.readline().strip().split("\t")
+		
+	#print(inverted_index)
+	#print(products)
+
+#Save inverted index
+with open("inverted_index.json", "w", encoding='utf-8') as idx:
+	json.dump(inverted_index, idx)
+
+#Build tf-idf 
+#Need term frequency of words in a doc * log(N_descriptions/N_descriptions_in_which_word_wi_appears)
+N_desc = len(products)
+tf = {}  
+#Build tf
+for word, desc_ids in inverted_index.items():
+    for desc_id in desc_ids:
+        if desc_id not in tf:
+            tf[desc_id] = {}
+        tf[desc_id][word] = tf[desc_id].get(word, 0) + 1  
+        
+#Build idf   idf = log(N_descriptions/N_descriptions_in_which_word_wi_appears)
+N_desc = len(products)
+idf = {}
+for word in inverted_index.keys():
+    idf[word] = math.log(N_desc / len(inverted_index[word]))
+
+#Create tf-idf
+tfidf = {}
+for desc_id, terms in tf.items():
+    tfidf[desc_id] = {}
+    for word, term_freq in terms.items():
+        tfidf[desc_id][word] = term_freq * idf[word]  
+
+with open("tdf_idf_problem_1.json","w") as f:
+	json.dump(tfidf, f)
+
