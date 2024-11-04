@@ -2,17 +2,18 @@ import nltk
 import re
 import json
 import math
-#We build an inverted index and store it into a file.
+
 nltk.download('stopwords')
 products = []
 #We normalize, then remove punctuation and stopwords from the description
+#We do not remove numbers in the form 1.5 or 1,5, also we want expressions like wi-fi, ddram-4 4,5-5 to be available.
 def preprocess(desc):
 	
 	#Normalize
 	desc = desc.lower() 
 	
 	#Tokenize and remove punctuation
-	tokenizer = nltk.tokenize.RegexpTokenizer(r'[\w-]+(?:[\d-]*[\.,]*[\d-]+)*') #do not remove numbers in the form 1.5 or 1,5, also we want expressions like wi-fi, ddram-4 4,5-5 to be available
+	tokenizer = nltk.tokenize.RegexpTokenizer(r'[\w-]+(?:[\d-]*[\.,]*[\d-]+)*') 
 	tokens = tokenizer.tokenize(desc)
 	stop_words = set(nltk.corpus.stopwords.words('italian'))
 	f_tokens = [token for token in tokens if token not in stop_words and token != '-']
@@ -34,18 +35,17 @@ with open("products.tsv","r") as f:
 				inverted_index[word] = []
 			inverted_index[word].append(id_)
 		l = f.readline().strip().split("\t")
-		
-	#print(inverted_index)
-	#print(products)
 
 #Save inverted index
 with open("inverted_index.json", "w", encoding='utf-8') as idx:
 	json.dump(inverted_index, idx)
 
 #Build tf-idf 
+
 #Need term frequency of words in a doc * log(N_descriptions/N_descriptions_in_which_word_wi_appears)
 N_desc = len(products)
 tf = {}  
+
 #Build tf
 for word, desc_ids in inverted_index.items():
     for desc_id in desc_ids:
@@ -65,7 +65,8 @@ for desc_id, terms in tf.items():
     tfidf[desc_id] = {}
     for word, term_freq in terms.items():
         tfidf[desc_id][word] = term_freq * idf[word]  
-
+        
+#Save tdf-idf
 with open("tdf_idf_problem_1.json","w") as f:
 	json.dump(tfidf, f)
 

@@ -9,7 +9,7 @@ def fetch_page(url):
     response = requests.get(url, headers=headers)
     return response.content
 
-def parse_page(page, num):
+def parse_page(page, num, found_products):
     tree = html.fromstring(page)
     products = []
     #//tag[@attribute='value']/text() to select all texts of tags with that attribute value
@@ -28,35 +28,40 @@ def parse_page(page, num):
     	price = item.xpath('.//span[@class="a-price"]/span[@class="a-offscreen"]/text()')
     	prime = item.xpath('.//span[contains(@class, "s-prime")]')
     	
-    	if title and price and link:
+    	if title and price and link and f"https://www.amazon.it{link[0]}" not in found_products: #avoid storing duplicates
             products.append({
             	"id" : num,
                 "description": title[0].strip(),
-                "price": price[0].strip().replace('\xa0',""), #remove \xa0 char otherwise we get prices like 299.99\xa0$
+                "price": price[0].strip().replace('\xa0',""), #remove \xa0 char otherwise we get price strings like 299.99\xa0$
                 "prime": bool(prime),
                 "url": f"https://www.amazon.it{link[0]}",
                 "stars": stars[0].strip().split()[0] if stars else None
             })
             num += 1
+            found_products.append(f"https://www.amazon.it{link[0]}")
 
-    return (products, num)
+    return (products, num, found_products)
     
 	
 
 site = "https://www.amazon.it/"
 keyword = "computer"
-max_pages = 7 #we get seven pages of results in total
+max_pages = 7 #we get seven pages of results in total, searching the page on the browser on amazon.it/keyword=computer, these are all the pages
 products = []
+found = []
 page = 1
 num = 1
 with open('products.tsv', 'a', encoding='utf-8') as f:
 	f.write("Id\tDescription\tPrice\tPrime\tURL\tStars\n")
-	while page <= max_pages:
+	while page <= max_pages:  
 		url = f"{site}s?k={keyword}&page={page}"
+		#send request and get response to parse
 		with urllib.request.urlopen(url) as response:
 	   		response = response.read()
-	   		products, num = parse_page(response, num)
+	   		products, num, found = parse_page(response, num, found)
 	   		for product in products:
+	   			print(f"{product['id']}\t{product['description']}\t{product['price']}\t{product['prime']}\t{product['url']}\t{product['stars']}\n")
 	   			f.write(f"{product['id']}\t{product['description']}\t{product['price']}\t{product['prime']}\t{product['url']}\t{product['stars']}\n")
+	   				
 	   		sleep(90)
 		page+=1

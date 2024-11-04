@@ -1,0 +1,5 @@
+In this problem, we divide the task into three parts (and three scripts): 
+	1. Product download, which contacts takes as input the html pages of the amazon products list for the keyword 'computer', which are 7, and returns a list of all the products returned by the amazon pages. Take note that, it was impossible to just tell the program to stop when amazon.it was not sending products anymore, since going further than the usual number of pages, amazon starts to return the same products again. I settled for stopping at 7 pages. In total, we get 297 products that amazon returned with the keyword 'computer'.
+	2. Building the inverted index, which compelled me to also build the tf-idf table in order for these two values to be used by the search engine.
+	3. Creating the search engine, which acts as a program that takes into input the user query, and looks for the descriptions with the highest cosine similarity to the query, and returns the products ordered by most similar description to least similar description. This is the core of the task, and its ultimate goal, and is also user interactive.
+	
