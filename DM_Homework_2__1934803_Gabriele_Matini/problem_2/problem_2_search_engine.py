@@ -44,12 +44,13 @@ description_vectors = description_vectors.withColumn("vector", create_vector_udf
 description_vectors = description_vectors.drop("vector_indices").drop("tf_idf_values")
 print("Search engine loaded successfully!")
 
-query = "computer lenovo"
+query = input("Insert your query(to exit press enter without insering anything): ")
 
 while query != "":
 	#Tokenize and process query to get query vector
 	regex = r'[\w]+(?:\.[\w-]+)*'
 	query_df = spark.createDataFrame([(query,)], ["query"])
+	print("Query is:\n")
 	query_df.show()
 	regex_tokenizer = RegexTokenizer(inputCol="query", outputCol="tokens", pattern=regex, toLowercase=True, gaps=False)
 	query_df = regex_tokenizer.transform(query_df)
@@ -65,13 +66,11 @@ while query != "":
 	tf_idf_query = idf_query.withColumn("tf_idf", functions.col("term_freq") * functions.col("idf"))
 	tf_idf_query = tf_idf_query.drop("idf").drop("term_freq").drop("desc_list").drop("num_desc")
 	tf_idf_query = indexer.fit(tf_idf).transform(tf_idf_query) #fit the same indexing as the one for the description vectors
-	#tf_idf_query.show()
 	
 	#Build query vector
 	query_vector = tf_idf_query.groupBy("query").agg(functions.collect_list("vector_index").alias("vector_indices"),functions.collect_list("tf_idf").alias("tf_idf_values"))
 	query_vector = query_vector.withColumn("query_vector", create_vector_udf("vector_indices", "tf_idf_values", functions.lit(N)))
 	query_vector = query_vector.drop("vector_indices").drop("tf_idf_values").drop("query")
-	query_vector.show()
 	
 	#Compare query vector to all description vectors
 	cosine_similarity_udf = functions.udf(cosine_similarity, FloatType())
@@ -80,10 +79,10 @@ while query != "":
 	
 	#Return result
 	result = result.join(df, on="Id", how="inner")
-	result = result.orderBy(functions.col("cosine_similarity").desc()).drop("Id").drop("vector").drop("query_vector").drop("cosine_similarity")
+	result = result.orderBy(functions.col("cosine_similarity").desc()).drop("Id").drop("vector").drop("query_vector")
 	result.show(truncate=False)
 	
-	query = ""
+	query = input("Insert your query(to exit press enter without insering anything): ")
 
 
 
