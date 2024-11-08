@@ -13,7 +13,7 @@ def preprocess(desc):
 	desc = desc.lower() 
 	
 	#Tokenize and remove punctuation
-	tokenizer = nltk.tokenize.RegexpTokenizer(r'[\w-]+(?:[\d-]*[\.,]*[\d-]+)*') 
+	tokenizer = nltk.tokenize.RegexpTokenizer(r'[\w]+(?:\.[\w-]+)*') 
 	tokens = tokenizer.tokenize(desc)
 	stop_words = set(nltk.corpus.stopwords.words('italian'))
 	f_tokens = [token for token in tokens if token not in stop_words and token != '-']
@@ -57,7 +57,7 @@ for word, desc_ids in inverted_index.items():
 N_desc = len(products)
 idf = {}
 for word in inverted_index.keys():
-    idf[word] = math.log(N_desc / len(inverted_index[word]))
+    idf[word] = math.log(N_desc / len(inverted_index[word]))/math.log(10)
 
 #Create tf-idf
 tfidf = {}
