@@ -2,7 +2,7 @@ from pyspark.sql import SparkSession
 from pyspark import SparkConf
 from pyspark.ml.feature import RegexTokenizer, StopWordsRemover, VectorAssembler, StringIndexer
 from pyspark.ml.linalg import Vectors
-from pyspark.sql import functions
+from pyspark.sql import functions, Row
 from pyspark.sql.types import ArrayType, FloatType, StringType
 import re
 import numpy as np
@@ -15,6 +15,8 @@ def create_vector(indices, values, size): #create vector with Spark / needs to b
     return vector
 
 def cosine_similarity(v1, v2):
+	if all(x == 0.0 for x in v1) or all(x == 0.0 for x in v2):
+        	return 0.0 
 	dot_product = sum([a * b for a, b in zip(v1, v2)])
 	norm_1 = sum([a ** 2 for a in v1]) ** 0.5
 	norm_2 = sum([b ** 2 for b in v2]) ** 0.5
@@ -34,7 +36,6 @@ print("Loading search engine...")
 #Create the description vectors
 indexer = StringIndexer(inputCol='terms',outputCol='vector_index')
 description_vectors = indexer.fit(tf_idf).transform(tf_idf)
-#description_vectors.show(n=description_vectors.count())
 description_vectors = description_vectors.groupBy("Id").agg(functions.collect_list("vector_index").alias("vector_indices"),functions.collect_list("tf_idf").alias("tf_idf_values"))
 
 #Same as problem 1, but using spark dataframes
@@ -71,6 +72,11 @@ while query != "":
 	query_vector = tf_idf_query.groupBy("query").agg(functions.collect_list("vector_index").alias("vector_indices"),functions.collect_list("tf_idf").alias("tf_idf_values"))
 	query_vector = query_vector.withColumn("query_vector", create_vector_udf("vector_indices", "tf_idf_values", functions.lit(N)))
 	query_vector = query_vector.drop("vector_indices").drop("tf_idf_values").drop("query")
+	if query_vector.count() == 0:
+		zero_vector = [0.0]*N
+		new_data = [Row(query_vector=zero_vector)]
+		query_vector = spark.createDataFrame(new_data)
+	query_vector.show()
 	
 	#Compare query vector to all description vectors
 	cosine_similarity_udf = functions.udf(cosine_similarity, FloatType())
