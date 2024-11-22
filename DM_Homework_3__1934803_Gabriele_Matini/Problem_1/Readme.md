@@ -1,0 +1,5 @@
+1. download-products.py is the file used if you want to test another dataset (amazon refreshes the results every now and then, so you can download it again to test the script on another dataset).
+2. utilities.py is the file where all the classes are implemented.
+3. run tests.py to test the script, you can modify b and r to tweak the results. 
+4. A results.txt file will be produced, each time saving the results
+5. Comments on the results: for a fixed n, tweaking b and r just changes amount of false posives vs false negatives. I decided also to see what increase in performance we would have for n=1000 with respect to n=100. As expected, the results are much better, since LSH makes 8 errors for n=100 and no errors for n=1000. However there is a price to pay: the time for n=100 is ~5.6 seconds, while for n=1000 the cost gets multiplied by 10, going to ~56 seconds to compute the LSH results. In any case, LSH takes more time than bruteforcing Nearest Neighbour, but that can be attributed to the relatively small dataset being analyzed and the fact that we are using cryptographic hash functions, which slow down the whole process of shingle hashing and minhashing.
