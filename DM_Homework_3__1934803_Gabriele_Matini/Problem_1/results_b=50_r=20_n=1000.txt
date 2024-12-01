@@ -10,5 +10,9 @@ Errors (both false positvies and false negatives) are: set().
 
 The intersection between the two results is {(105, 158), (82, 289), (139, 292), (146, 301), (21, 69), (49, 301), (49, 146), (146, 152), (49, 152)} for a size of 9.
 
-The time required for LSH was 56.13854217529297 sec
- The time required to bruteforce the nearest neighbours was 0.5778977870941162 sec.
+The time required for LSH was 56.63839817047119 sec, of which:
+ 0.07199358940124512 is time of shingling,
+ 56.48347520828247 is time for minashing, and
+ 0.08291363716125488 is time for lsh proper.
+
+The time required to bruteforce the nearest neighbours was 0.7178623676300049 sec.

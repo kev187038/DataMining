@@ -43,10 +43,9 @@ class Shingling:
 
 class MinHashing:
 
-    def __init__(self, num_hash_functions, max_hash_value=None):
+    def __init__(self, num_hash_functions):
         
         self.num_hash_functions = num_hash_functions
-        self.max_hash_value = max_hash_value if max_hash_value else 2**32 - 1
         self.hash_functions = [hashFamily(i) for i in range(num_hash_functions)] 
 
     #Input: set of hashed shingles - Output: signature list
@@ -55,7 +54,7 @@ class MinHashing:
         signature = []
         #Apply each hash function to the hashed shingles and find the minimum hash value
         for hash_function in self.hash_functions:
-            min_hash = min(hash_function(shingle.to_bytes((shingle.bit_length() + 7) // 8, 'big')) for shingle in hashed_shingles) #calculate byte lenght of shingles rounding down
+            min_hash = min(hash_function(shingle.to_bytes((shingle.bit_length() + 7)//8, 'big')) for shingle in hashed_shingles) #calculate byte lenght of shingles rounding down
             signature.append(min_hash)
         return signature
         
@@ -71,8 +70,8 @@ class LSH:
         band_str = ",".join(map(str, band)) 
         return self.hash_functions[band_idx](band_str.encode('utf-8'))
 
-    #Input : signature list - Output: set of nearest neighbours tuples
-    def find_pairs(self, signatures, threshold):
+    #Input : signature list - Output: set of nearest neighbours tuples found by LSH
+    def find_pairs(self, signatures):
         #Find candidate pairs by hashing the bands and going through the buckets
         if not signatures:
             return set() 
@@ -99,7 +98,6 @@ class LSH:
         for band_buckets in buckets:
             for bucket_docs in band_buckets.values():
                 if len(bucket_docs) > 1:
-                    #print(cv, bucket_docs)
                     #Add all pairs of documents in the same bucket
                     for i in range(len(bucket_docs)):
                         for j in range(i + 1, len(bucket_docs)): #need to put all docs inside candidate pairs without putting the pair containing the same doc

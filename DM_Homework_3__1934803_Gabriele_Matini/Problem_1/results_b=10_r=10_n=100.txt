@@ -1,14 +1,18 @@
 Near duplicates found with LSH are: 
  {(20, 101), (105, 158), (82, 289), (124, 299), (139, 292), (166, 292), (146, 301), (21, 69), (49, 301), (195, 292), (139, 195), (166, 195), (49, 146), (152, 301), (139, 166), (146, 152), (49, 152)}, 
- for a total of 17 near duplicates 
+ for a total of 17 near duplicates. 
 
 True Nearest Neighbours are: 
  {(105, 158), (82, 289), (139, 292), (146, 301), (21, 69), (49, 301), (49, 146), (146, 152), (49, 152)}, 
- for a total of 9 duplicates 
+ for a total of 9 duplicates. 
 
-Errors (both false positvies and false negatives) are: {(20, 101), (124, 299), (166, 292), (195, 292), (139, 195), (166, 195), (152, 301), (139, 166)}
+Errors (both false positvies and false negatives) are: {(20, 101), (124, 299), (166, 292), (195, 292), (139, 195), (166, 195), (152, 301), (139, 166)}.
 
-The intersection between the two results is {(105, 158), (82, 289), (139, 292), (146, 301), (49, 301), (49, 146), (21, 69), (146, 152), (49, 152)} for a size of 9
+The intersection between the two results is {(105, 158), (82, 289), (139, 292), (146, 301), (49, 301), (49, 146), (21, 69), (146, 152), (49, 152)} for a size of 9.
 
-The time required for LSH was 5.66146183013916 sec
- The time required to bruteforce the nearest neighbours was 0.6715240478515625 sec
+The time required for LSH was 5.547929763793945 sec, of which:
+ 0.07506561279296875 is time of shingling,
+ 5.462373733520508 is time for minashing, and
+ 0.010474681854248047 is time for lsh proper.
+
+The time required to bruteforce the nearest neighbours was 0.5763654708862305 sec.
