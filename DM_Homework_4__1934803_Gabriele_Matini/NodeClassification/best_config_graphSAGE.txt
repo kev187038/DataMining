@@ -1,0 +1,2 @@
+{'learning_rate': 0.005, 'hidden_units': 16, 'dropout': 0.75, 'aggregate function': 'mean', 'weight_decay': 0.0001, 'num_epochs': 150}
+

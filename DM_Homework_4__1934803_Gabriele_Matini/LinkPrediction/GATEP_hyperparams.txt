@@ -1,0 +1,1 @@
+{'learning_rate': 0.01, 'use_concatenation': False, 'hidden_units': 16, 'heads': 8, 'dropout': 0.75, 'weight_decay': 1e-06, 'num_epochs': 150}

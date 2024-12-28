@@ -1,0 +1,1 @@
+{'embedding_dim': 64, 'walk_length': 20, 'context_size': 10, 'batch_size': 64, 'lr': 0.01, 'p': 0.5, 'q': 1.0, 'epochs': 100}
